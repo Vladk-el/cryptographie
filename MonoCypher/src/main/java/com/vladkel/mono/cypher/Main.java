@@ -2,6 +2,8 @@ package com.vladkel.mono.cypher;
 
 import java.io.File;
 
+import com.vladkel.common.crypto.interfaces.ICypher;
+
 public class Main {
 	
 	private static String keyFile = "myKey.txt";

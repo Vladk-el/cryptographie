@@ -14,11 +14,12 @@ import java.util.Random;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.vladkel.common.crypto.interfaces.ICypher;
 import com.vladkel.common.crypto.utils.AlphabetUtils;
 import com.vladkel.common.crypto.utils.FileUtils;
 import com.vladkel.common.crypto.utils.MapUtils;
 
-public class HomophonicCypher {
+public class HomophonicCypher implements ICypher {
 	
 	Map<Character, Integer> frequencyArray;
 	
@@ -38,7 +39,8 @@ public class HomophonicCypher {
 		
 		fillFrequencyArray(frequencySample);
 	}
-	
+
+	@Override
 	public Boolean encode(File message, File key, File encoded) {
 		
 		Map<Character, List<Byte>> bytes = new HashMap<Character, List<Byte>>();
@@ -82,7 +84,13 @@ public class HomophonicCypher {
 		return false;
 	}
 	
+	@Override
+	public Boolean decode(File crypted, File key, File decoded) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
+	@Override
 	public boolean generateKey(File keyFile) {
 				
 		Map<Character, List<Byte>> bytes = new HashMap<Character, List<Byte>>();

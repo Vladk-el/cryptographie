@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.vladkel.cesar.cypher.CesarCypher;
+import com.vladkel.common.crypto.interfaces.IAttack;
 import com.vladkel.common.crypto.utils.AlphabetUtils;
 import com.vladkel.common.crypto.utils.FileUtils;
 
-public class CesarAttack {
+public class CesarAttack{
 	
 	private String encoded = "encoded.txt";
 	private String decoded = "temp_decoded.txt";

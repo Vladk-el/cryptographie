@@ -13,7 +13,7 @@ public class Main {
 		
 		BigramEncodedAttack attack = new BigramEncodedAttack(new File(frequencySample));
 		
-		attack.getKey(new File(encoded), new File(foundKey));
+		attack.findKey(new File(encoded), new File(foundKey));
 		
 	}
 }

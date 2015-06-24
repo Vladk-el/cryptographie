@@ -2,15 +2,14 @@ package com.vladkel.vigenere.cypher;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import com.vladkel.common.crypto.interfaces.ICypher;
 import com.vladkel.common.crypto.utils.AlphabetUtils;
 import com.vladkel.common.crypto.utils.FileUtils;
 
-public class VigenereCypher {
+public class VigenereCypher implements ICypher {
 	
 	List<Character> robins;
 	Iterator<Character> it;
@@ -20,11 +19,11 @@ public class VigenereCypher {
 		robins = new ArrayList<>();
 	}
 	
+	@Override
 	public Boolean encode(File message, File key, File encoded) {
 		String originalMessage;
 		String keyStr;
 		String encodedMessage;
-		Map<Character, Character> dico = new HashMap<>();
 		
 		try {
 			
@@ -55,12 +54,16 @@ public class VigenereCypher {
 			for(int i = 0; i < originalMessage.length(); i++) {
 				char c;
 				char robin = (char) getRobin();
+				int position = AlphabetUtils.alphabet.indexOf(originalMessage.charAt(i)) + AlphabetUtils.alphabet.indexOf(robin);
 				
-				System.out.println("robin : " + robin);
+				c = position < AlphabetUtils.alphabet.length() ? 
+						AlphabetUtils.alphabet.charAt(position) : 
+							AlphabetUtils.alphabet.charAt(position - AlphabetUtils.alphabet.length());
 				
-				c = (char) ((originalMessage.charAt(i) + robin) % AlphabetUtils.alphabet.length()-1);
-				
-				System.out.println("found char : " + c);
+//				System.out.println("robin : " + robin);
+//				System.out.println("clear char : " + originalMessage.charAt(i));
+//				System.out.println("crypted char : " + c);
+//				System.out.println();
 				sb.append(c);
 			}
 			
@@ -73,6 +76,8 @@ public class VigenereCypher {
 			
 			FileUtils.writeFile(encoded, encodedMessage);
 			
+			System.out.println("Message encoded properly");
+			
 			return true;
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -81,6 +86,74 @@ public class VigenereCypher {
 		return false;
 	}
 	
+	@Override
+	public Boolean decode(File crypted, File key, File decoded) {
+		
+		String cryptedMessage;
+		String keyStr;
+		String decodedMessage;
+		
+		try {
+			
+			/**
+			 * Read crypted
+			 */
+			
+			cryptedMessage = FileUtils.readFile(crypted);
+			System.out.println("Crypted message : " + cryptedMessage);
+			
+			/**
+			 * Read key
+			 */
+			
+			keyStr = FileUtils.readFile(key);
+			System.out.println("Key : " + keyStr);
+			
+			/**
+			 * Traitment
+			 */
+			
+			StringBuilder sb = new StringBuilder();
+			
+			for(int i = 0; i < cryptedMessage.length(); i++) {
+				char c;
+				char robin = (char) getRobin();
+				int position = AlphabetUtils.alphabet.indexOf(cryptedMessage.charAt(i)) - AlphabetUtils.alphabet.indexOf(robin);
+				
+				c = position >= 0 ? 
+						AlphabetUtils.alphabet.charAt(position) : 
+							AlphabetUtils.alphabet.charAt(AlphabetUtils.alphabet.length() + position);
+				
+//				System.out.println("robin : " + robin);
+//				System.out.println("clear char : " + cryptedMessage.charAt(i));
+//				System.out.println("crypted char : " + c);
+//				System.out.println();
+				sb.append(c);
+			}
+			
+			decodedMessage = sb.toString();
+			System.out.println("Decoded message : " + decodedMessage);
+			
+			/**
+			 * Write decoded message
+			 */
+			
+			FileUtils.writeFile(decoded, decodedMessage);
+			
+			return true;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public boolean generateKey(File key) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	private int getRobin() {
 		if(!it.hasNext()) {
 			it = robins.iterator();

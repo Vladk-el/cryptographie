@@ -7,11 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.vladkel.common.crypto.interfaces.IAttack;
 import com.vladkel.common.crypto.utils.AlphabetUtils;
 import com.vladkel.common.crypto.utils.FileUtils;
 import com.vladkel.common.crypto.utils.MapUtils;
 
-public class MonoEncodedAttack implements IMonoEncodedAttack {
+public class MonoEncodedAttack implements IAttack {
 
 	Map<Character, Integer> frequencyArray;
 

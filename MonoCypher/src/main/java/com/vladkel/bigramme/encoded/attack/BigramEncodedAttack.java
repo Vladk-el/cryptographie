@@ -7,11 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.vladkel.common.crypto.interfaces.IAttack;
 import com.vladkel.common.crypto.utils.AlphabetUtils;
 import com.vladkel.common.crypto.utils.FileUtils;
 import com.vladkel.common.crypto.utils.MapUtils;
 
-public class BigramEncodedAttack {
+public class BigramEncodedAttack implements IAttack{
 
 	Map<String, Integer> frequencyBigramArray;
 
@@ -51,7 +52,8 @@ public class BigramEncodedAttack {
 
 	}
 	
-	public void getKey(File encoded, File keyFile) {
+	@Override
+	public void findKey(File encoded, File keyFile) {
 		
 		try {
 			String sample = AlphabetUtils.formalize(FileUtils.readFile(encoded));
