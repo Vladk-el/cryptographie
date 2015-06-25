@@ -53,4 +53,27 @@ public class MapUtils {
 		return sortedHashMap;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T, U> Map<T, U> sortByValues(Map<T, U> frequencyArray2, boolean increasement) {
+		List<Character> list = new LinkedList(frequencyArray2.entrySet());
+		// Defined Custom Comparator here
+		Collections.sort(list, new Comparator<Object>() {
+			public int compare(final Object o1, final Object o2) {
+				int value = ((Comparable) ((Map.Entry) (o1)).getValue()).compareTo(((Map.Entry) (o2)).getValue());
+				
+				return increasement ? value : - value;
+				
+			}
+		});
+
+		// Here I am copying the sorted list in HashMap
+		// using LinkedHashMap to preserve the insertion order
+		HashMap sortedHashMap = new LinkedHashMap();
+		for (Iterator it = list.iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			sortedHashMap.put(entry.getKey(), entry.getValue());
+		}
+		return sortedHashMap;
+	}
+	
 }

@@ -106,8 +106,11 @@ public class VigenereCypher implements ICypher {
 			 * Read key
 			 */
 			
-			keyStr = FileUtils.readFile(key);
-			System.out.println("Key : " + keyStr);
+			keyStr =  AlphabetUtils.formalize(FileUtils.readFile(key));
+			for(int i = 0; i < keyStr.length(); i++) {
+				robins.add(keyStr.charAt(i));
+			}
+			it = robins.iterator();
 			
 			/**
 			 * Traitment
