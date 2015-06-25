@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.print.attribute.standard.OrientationRequested;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -48,15 +50,13 @@ public class HomophonicCypher implements ICypher {
 		/**
 		 * Read key
 		 */
-		
-		
-		
+				
 		try {
 			InputStream is = new FileInputStream(key);
 			
 			byte[] array = IOUtils.toByteArray(is);
 			
-//			for(byte b : bytes) {
+//			for(byte b : array) {
 //				System.out.print((char)b + " ==> ");
 //				System.out.format("0x%x \n", b);
 //			}
@@ -64,30 +64,104 @@ public class HomophonicCypher implements ICypher {
 			int cpt = 0;
 			
 			for(int i = 0; i < array.length; i++) {
+				if(cpt > AlphabetUtils.alphabet.length() - 1)
+					break;
+				
+//				System.out.println(cpt);
+//				System.out.println(AlphabetUtils.alphabet.charAt(cpt));
+				
 				int size = (int)((char) array[i]);
 				bytes.put(AlphabetUtils.alphabet.charAt(cpt), new ArrayList<>());
-				for(int j = i+1; j < size + i; j++) {
+				for(int j = i+1; j < size + i + 1; j++) {
 					bytes.get(AlphabetUtils.alphabet.charAt(cpt)).add(array[j]);
 				}
 				i += size;
 				cpt++;
-				if(cpt > AlphabetUtils.alphabet.length())
-					break;
 			}
 			
+//			for(char c : bytes.keySet()) {
+//				System.out.println(c + " => " + bytes.get(c).size());
+//			}
+			
+			String originalMessage = AlphabetUtils.formalize(FileUtils.readFile(message)).trim();
+			System.out.println("Origninal message : " + originalMessage);
+			List<Byte> list = new ArrayList<>();
+			Random rd = new Random();
+			
+			for(int i = 0; i < originalMessage.length(); i++) {
+				list.add(bytes.get(originalMessage.charAt(i)).get(rd.nextInt(bytes.get(originalMessage.charAt(i)).size())));
+			}
+			
+			FileOutputStream output = new FileOutputStream(encoded);
+			Byte [] content = list.toArray(new Byte[list.size()]);
+			IOUtils.write(ArrayUtils.toPrimitive(content), output);
+			
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		
 		return false;
 	}
 	
 	@Override
 	public Boolean decode(File crypted, File key, File decoded) {
-		// TODO Auto-generated method stub
-		return null;
+		Map<Byte, Character> bytes = new HashMap<>();
+		
+		/**
+		 * Read key
+		 */
+				
+		try {
+			InputStream is = new FileInputStream(key);
+			
+			byte[] array = IOUtils.toByteArray(is);
+			
+			is.close();
+//			for(byte b : array) {
+//				System.out.print((char)b + " ==> ");
+//				System.out.format("0x%x \n", b);
+//			}
+			
+			int cpt = 0;
+			
+			for(int i = 0; i < array.length; i++) {
+				if(cpt > AlphabetUtils.alphabet.length() - 1)
+					break;
+				
+//				System.out.println(cpt);
+//				System.out.println(AlphabetUtils.alphabet.charAt(cpt));
+				
+				int size = (int)((char) array[i]);
+				
+				for(int j = i+1; j < size + i + 1; j++) {
+					bytes.put(array[j], AlphabetUtils.alphabet.charAt(cpt));
+				}
+				i += size;
+				cpt++;
+			}
+			
+//			for(char c : bytes.keySet()) {
+//				System.out.println(c + " => " + bytes.get(c).size());
+//			}
+			
+			is = new FileInputStream(crypted);
+			
+			array = IOUtils.toByteArray(is);
+			StringBuilder sb = new StringBuilder();
+			
+			for(int i = 0; i < array.length; i++) {
+				sb.append(bytes.get(array[i]));
+			}
+			
+			System.out.println("Decrypted message : " + sb.toString());
+			FileUtils.writeFile(decoded, sb.toString());
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
 	}
 	
 	@Override
@@ -98,20 +172,20 @@ public class HomophonicCypher implements ICypher {
 		try {
 			int cpt = 0;
 			for(Character key : frequencyArray.keySet()) {
-				System.out.println(key);
+				//System.out.println(key);
 				if(cpt < frequencyArray.size()/10) {
 					bytes.put(key, getBytesForChar(5));
-				} else if(cpt < frequencyArray.size()/8) {
+				} else if(cpt < frequencyArray.size()/5) {
 					bytes.put(key, getBytesForChar(4));
-				} else if(cpt < frequencyArray.size()/6) {
-					bytes.put(key, getBytesForChar(3));
 				} else if(cpt < frequencyArray.size()/4) {
+					bytes.put(key, getBytesForChar(3));
+				} else if(cpt < frequencyArray.size()/2) {
 					bytes.put(key, getBytesForChar(2));
 				} else {
 					bytes.put(key, getBytesForChar(1));
 				}
 				
-				//System.out.println(key + " ==> "  + frequencyArray.get(key));
+				//System.out.println(key + " ==> "  + bytes.get(key).size());
 				cpt++;
 			}
 			
@@ -141,9 +215,9 @@ public class HomophonicCypher implements ICypher {
 		List<Byte> list = new ArrayList<>();
 		for(int i = 0; i < weight; i++) {
 			int value = getRandomInt();
-			System.out.print(value + " ==> ");
+			//System.out.print(value + " ==> ");
 			byte b = (byte) ((char)value);
-			System.out.format("0x%x \n", b);
+			//System.out.format("0x%x \n", b);
 			list.add(b);
 		}
 		return list;
@@ -161,7 +235,7 @@ public class HomophonicCypher implements ICypher {
 			
 			content = AlphabetUtils.formalize(content).trim();
 
-			System.out.println("Clear content : " + content.substring(0, 50) + " ...");
+			//System.out.println("Clear content : " + content.substring(0, 50) + " ...");
 
 			for (int i = 0; i < content.length(); i++) {
 				char c = Character.toUpperCase(content.charAt(i));
