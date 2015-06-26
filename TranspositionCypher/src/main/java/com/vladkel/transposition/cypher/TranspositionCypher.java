@@ -151,20 +151,20 @@ public class TranspositionCypher implements ICypher {
 	@Override
 	public boolean generateKey(File key) {
 
-		Random rd = new Random();
-		int nb = rd.nextInt((10 - 5) + 1) + 5;
-		byte[] bytes = new byte[nb];
-		List<Byte> list = new ArrayList<>();
-		
-		for(int i = 0; i < nb; i++) {
-			list.add((byte)i);
-		}
-		
-		for(int i = 0; i < nb; i++) {
-			bytes[i] = (byte) list.remove(rd.nextInt(list.size()));
-		}
+//		Random rd = new Random();
+//		int nb = rd.nextInt((10 - 5) + 1) + 5;
+//		byte[] bytes = new byte[nb];
+//		List<Byte> list = new ArrayList<>();
+//		
+//		for(int i = 0; i < nb; i++) {
+//			list.add((byte)i);
+//		}
+//		
+//		for(int i = 0; i < nb; i++) {
+//			bytes[i] = (byte) list.remove(rd.nextInt(list.size()));
+//		}
 
-		//byte[] bytes = { (byte) 2, (byte) 4, (byte) 0, (byte) 1, (byte) 3 };
+		byte[] bytes = { (byte) 2, (byte) 4, (byte) 0, (byte) 1, (byte) 3 };
 
 		try {
 			FileOutputStream fos = new FileOutputStream(key);
