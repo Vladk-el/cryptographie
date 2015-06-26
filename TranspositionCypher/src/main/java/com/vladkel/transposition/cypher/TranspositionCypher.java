@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.vladkel.common.crypto.interfaces.ICypher;
@@ -18,6 +20,8 @@ public class TranspositionCypher implements ICypher {
 
 	@Override
 	public Boolean encode(File message, File key, File encoded) {
+
+		System.out.println("Encoding file " + message.getName());
 
 		try {
 			/**
@@ -66,6 +70,8 @@ public class TranspositionCypher implements ICypher {
 			 */
 
 			FileUtils.writeFile(encoded, sb.toString());
+			
+			System.out.println("Encoding OK, write in  " + encoded.getName());;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -77,6 +83,8 @@ public class TranspositionCypher implements ICypher {
 	@Override
 	public Boolean decode(File crypted, File key, File decoded) {
 
+		System.out.println("Decoding file " + crypted.getName());
+		
 		try {
 
 			/**
@@ -102,20 +110,20 @@ public class TranspositionCypher implements ICypher {
 			StringBuilder sb = new StringBuilder();
 
 			for (int i = 0; i < array.length; i++) {
-				System.out.println(array[i]);
+//				System.out.println(array[i]);
 				String temp = array[i].toString();
 				for (int j = 0; j < keyBites.length; j++) {
 					
-					System.out.print("\t"
-							+ j 
-							+ " : "
-							+ ((int) keyBites[j]) + " : ");
-					
-					System.out.println(
-							temp.charAt((int) keyBites[j])
-							+ " ==> "
-							+ temp.charAt(j)
-					);
+//					System.out.print("\t"
+//							+ j 
+//							+ " : "
+//							+ ((int) keyBites[j]) + " : ");
+//					
+//					System.out.println(
+//							temp.charAt((int) keyBites[j])
+//							+ " ==> "
+//							+ temp.charAt(j)
+//					);
 					
 					array[i].setCharAt(
 							(int) keyBites[j],  
@@ -131,6 +139,8 @@ public class TranspositionCypher implements ICypher {
 
 			FileUtils.writeFile(decoded, sb.toString());
 
+			System.out.println("Decoding OK, write in  " + decoded.getName());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -141,15 +151,20 @@ public class TranspositionCypher implements ICypher {
 	@Override
 	public boolean generateKey(File key) {
 
-		// Random rd = new Random();
-		// int nb = rd.nextInt((10 - 5) + 1) + 5;
-		// byte[] bytes = new byte[nb];
-		//
-		// for(int i = 0; i < nb; i++) {
-		// bytes[i] = (byte) rd.nextInt(nb);
-		// }
+		Random rd = new Random();
+		int nb = rd.nextInt((10 - 5) + 1) + 5;
+		byte[] bytes = new byte[nb];
+		List<Byte> list = new ArrayList<>();
+		
+		for(int i = 0; i < nb; i++) {
+			list.add((byte)i);
+		}
+		
+		for(int i = 0; i < nb; i++) {
+			bytes[i] = (byte) list.remove(rd.nextInt(list.size()));
+		}
 
-		byte[] bytes = { (byte) 2, (byte) 4, (byte) 0, (byte) 1, (byte) 3 };
+		//byte[] bytes = { (byte) 2, (byte) 4, (byte) 0, (byte) 1, (byte) 3 };
 
 		try {
 			FileOutputStream fos = new FileOutputStream(key);
